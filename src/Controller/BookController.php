@@ -2,30 +2,46 @@
 
 namespace App\Controller;
 
-use App\Entity\Book;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\DTO\BookDTO;
+use App\Service\BookService;
+use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class BookController extends AbstractController
 {
-    #[Route('/api/books', name: 'book_list', methods: ['GET'])]
-    public function list(EntityManagerInterface $em): Response
+    public BookService $service;
+
+    public function __construct(BookService $service)
     {
-        $books = $em->getRepository(Book::class)->findAll();
+        $this->service = $service;
+    }
+
+    #[Route('/api/books', methods: ['GET'], format: 'json')]
+    public function list(Request $request): Response
+    {
+        $books = $this->service->list(
+            page: $request->query->get('page', 1),
+            limit: $request->query->get('limit', 10)
+        );
+
         return $this->json($books);
     }
 
-    #[Route('/api/books', name: 'book_create', methods: ['POST'])]
-    public function create(Request $request, EntityManagerInterface $em): Response
+    #[Route('/api/books', methods: ['POST'], format: 'json')]
+    #[OA\Parameter(name: 'title', schema: new OA\Schema(type: 'string'))]
+    #[OA\Parameter(name: 'description', schema: new OA\Schema(type: 'string'))]
+    #[OA\Parameter(name: 'author', schema: new OA\Schema(type: 'string'))]
+    #[OA\Parameter(name: 'publishingDate', schema: new OA\Schema(type: 'date'))]
+    #[OA\Parameter(name: 'coAuthor', required: false, schema: new OA\Schema(type: 'string'))]
+    public function create(BookDTO $bookDTO): Response
     {
-        $data = json_decode($request->getContent(), true);
-        $book = new Book();
-        $book->setTitle($data['title']);
-        $em->persist($book);
-        $em->flush();
+        $bookDTO->validate();
+
+        $book = $this->service->create($bookDTO);
+
         return $this->json($book, Response::HTTP_CREATED);
     }
 }

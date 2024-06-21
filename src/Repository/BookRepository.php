@@ -2,42 +2,47 @@
 
 namespace App\Repository;
 
+use App\DTO\BookDTO;
 use App\Entity\Book;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
-/**
- * @extends ServiceEntityRepository<Book>
- */
 class BookRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public EntityManagerInterface $entityManagerInterface;
+
+    public function __construct(ManagerRegistry $registry, EntityManagerInterface $entityManagerInterface)
     {
+        $this->entityManagerInterface = $entityManagerInterface;
+
         parent::__construct($registry, Book::class);
     }
 
-    //    /**
-    //     * @return Book[] Returns an array of Book objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('b')
-    //            ->andWhere('b.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('b.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function list(int $page, int $limit)
+    {
+        $queryBuilder = $this->createQueryBuilder('b');
 
-    //    public function findOneBySomeField($value): ?Book
-    //    {
-    //        return $this->createQueryBuilder('b')
-    //            ->andWhere('b.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        return $queryBuilder 
+        ->setFirstResult($limit * ($page - 1))
+        ->setMaxResults($limit)
+        ->getQuery()
+        ->getResult();
+    }
+
+    public function create(BookDTO $bookDTO): Book
+    {
+        $book = new Book();
+        
+        $book->setTitle($book->getTitle());
+        $book->setDescription($book->getDescription());
+        $book->setAuthor($book->getAuthor());
+        $book->setPublishingDate($book->getPublishingDate());
+        $book->setCoAuthor($book->getCoAuthor());
+
+        $this->entityManagerInterface->persist($book);
+        $this->entityManagerInterface->flush();
+
+        return $book;
+    }
 }
