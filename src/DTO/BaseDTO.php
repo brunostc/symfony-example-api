@@ -8,12 +8,14 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 abstract class BaseDTO
 {
-    public function __construct(protected ValidatorInterface $validator)
+    public function __construct(
+        protected ValidatorInterface $validator
+    )
     {
         $this->populate();
     }
 
-    public function validate()
+    public function validate(): void
     {
         $errors = $this->validator->validate($this);
 

@@ -19,6 +19,20 @@ class BookController extends AbstractController
         $this->service = $service;
     }
 
+    #[Route('/api/books/{id}', methods: ['GET'], format: 'json')]
+    public function get(int $id): Response
+    {
+        $book = $this->service->find($id);
+
+        if (!$book) {
+            return $this->json([
+                'message' => 'Book not found'
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        return $this->json($book, Response::HTTP_OK);
+    }
+
     #[Route('/api/books', methods: ['GET'], format: 'json')]
     public function list(Request $request): Response
     {
@@ -43,5 +57,26 @@ class BookController extends AbstractController
         $book = $this->service->create($bookDTO);
 
         return $this->json($book, Response::HTTP_CREATED);
+    }
+
+    #[Route('/api/books/{id}', methods: ['PUT'], format: 'json')]
+    #[OA\Parameter(name: 'title', schema: new OA\Schema(type: 'string'))]
+    #[OA\Parameter(name: 'description', schema: new OA\Schema(type: 'string'))]
+    #[OA\Parameter(name: 'author', schema: new OA\Schema(type: 'string'))]
+    #[OA\Parameter(name: 'publishingDate', schema: new OA\Schema(type: 'date'))]
+    #[OA\Parameter(name: 'coAuthor', required: false, schema: new OA\Schema(type: 'string'))]
+    public function update(int $id, BookDTO $bookDTO): Response
+    {
+        $bookDTO->validate();
+
+        $book = $this->service->update($id, $bookDTO);
+
+        if (!$book) {
+            return $this->json([
+                'message' => 'Book not found'
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        return $this->json($book, Response::HTTP_OK);
     }
 }

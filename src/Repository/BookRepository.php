@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use DateTime;
 use App\DTO\BookDTO;
 use App\Entity\Book;
 use Doctrine\ORM\EntityManagerInterface;
@@ -19,30 +20,46 @@ class BookRepository extends ServiceEntityRepository
         parent::__construct($registry, Book::class);
     }
 
-    public function list(int $page, int $limit)
+    public function list(int $page, int $limit): array
     {
         $queryBuilder = $this->createQueryBuilder('b');
 
-        return $queryBuilder 
-        ->setFirstResult($limit * ($page - 1))
-        ->setMaxResults($limit)
-        ->getQuery()
-        ->getResult();
+        return [
+            'data' => $queryBuilder
+                ->setFirstResult($limit * ($page - 1))
+                ->setMaxResults($limit)
+                ->getQuery()
+                ->getResult(),
+            'limit' => $limit,
+            'page' => $page
+        ];
     }
 
     public function create(BookDTO $bookDTO): Book
     {
         $book = new Book();
-        
-        $book->setTitle($book->getTitle());
-        $book->setDescription($book->getDescription());
-        $book->setAuthor($book->getAuthor());
-        $book->setPublishingDate($book->getPublishingDate());
-        $book->setCoAuthor($book->getCoAuthor());
+
+        $book->setTitle($bookDTO->getTitle());
+        $book->setDescription($bookDTO->getDescription());
+        $book->setAuthor($bookDTO->getAuthor());
+        $book->setPublishingDate(new DateTime($bookDTO->getPublishingDate()));
+        $book->setCoAuthor($bookDTO->getCoAuthor());
 
         $this->entityManagerInterface->persist($book);
         $this->entityManagerInterface->flush();
 
+        return $book;
+    }
+
+    public function update(Book $book, BookDTO $bookDTO): Book
+    {
+        $book->setTitle($bookDTO->getTitle());
+        $book->setDescription($bookDTO->getDescription());
+        $book->setAuthor($bookDTO->getAuthor());
+        $book->setPublishingDate(new DateTime($bookDTO->getPublishingDate()));
+        $book->setCoAuthor($bookDTO->getCoAuthor());
+        $this->entityManagerInterface->persist($book);
+        $this->entityManagerInterface->flush();
         return $book;
     }
 }
