@@ -41,4 +41,17 @@ class BookService
 
         return $this->repository->update($book, $bookDTO);
     }
+
+    public function delete(int $id): bool
+    {
+        $book = $this->repository->find($id);
+
+        if (!$book) {
+            return false;
+        }
+
+        $this->repository->delete($book);
+
+        return true;
+    }
 }

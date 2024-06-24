@@ -62,4 +62,10 @@ class BookRepository extends ServiceEntityRepository
         $this->entityManagerInterface->flush();
         return $book;
     }
+
+    public function delete(Book $book): void
+    {
+        $this->entityManagerInterface->remove($book);
+        $this->entityManagerInterface->flush();
+    }
 }

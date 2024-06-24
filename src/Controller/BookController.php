@@ -34,6 +34,8 @@ class BookController extends AbstractController
     }
 
     #[Route('/api/books', methods: ['GET'], format: 'json')]
+    #[OA\Parameter(name: 'page', schema: new OA\Schema(type: 'integer'))]
+    #[OA\Parameter(name: 'limit', schema: new OA\Schema(type: 'integer'))]
     public function list(Request $request): Response
     {
         $books = $this->service->list(
@@ -45,11 +47,19 @@ class BookController extends AbstractController
     }
 
     #[Route('/api/books', methods: ['POST'], format: 'json')]
-    #[OA\Parameter(name: 'title', schema: new OA\Schema(type: 'string'))]
-    #[OA\Parameter(name: 'description', schema: new OA\Schema(type: 'string'))]
-    #[OA\Parameter(name: 'author', schema: new OA\Schema(type: 'string'))]
-    #[OA\Parameter(name: 'publishingDate', schema: new OA\Schema(type: 'date'))]
-    #[OA\Parameter(name: 'coAuthor', required: false, schema: new OA\Schema(type: 'string'))]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: "title", type: "string", example: "Title"),
+                new OA\Property(property: "description", type: "string", example: "Description"),
+                new OA\Property(property: "author", type: "string", example: "John Doe"),
+                new OA\Property(property: "publishingDate", type: "string", format: "date", example: "2023-01-01"),
+                new OA\Property(property: "coAuthor", type: "string", example: "Jane Doe", nullable: true)
+            ],
+            type: "object"
+        )
+    )]
     public function create(BookDTO $bookDTO): Response
     {
         $bookDTO->validate();
@@ -59,12 +69,20 @@ class BookController extends AbstractController
         return $this->json($book, Response::HTTP_CREATED);
     }
 
-    #[Route('/api/books/{id}', methods: ['PUT'], format: 'json')]
-    #[OA\Parameter(name: 'title', schema: new OA\Schema(type: 'string'))]
-    #[OA\Parameter(name: 'description', schema: new OA\Schema(type: 'string'))]
-    #[OA\Parameter(name: 'author', schema: new OA\Schema(type: 'string'))]
-    #[OA\Parameter(name: 'publishingDate', schema: new OA\Schema(type: 'date'))]
-    #[OA\Parameter(name: 'coAuthor', required: false, schema: new OA\Schema(type: 'string'))]
+    #[Route('/api/books/{id}', methods: ['PUT'], format: 'json',)]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: "title", type: "string", example: "Title"),
+                new OA\Property(property: "description", type: "string", example: "Description"),
+                new OA\Property(property: "author", type: "string", example: "John Doe"),
+                new OA\Property(property: "publishingDate", type: "string", format: "date", example: "2023-01-01"),
+                new OA\Property(property: "coAuthor", type: "string", example: "Jane Doe", nullable: true)
+            ],
+            type: "object"
+        )
+    )]
     public function update(int $id, BookDTO $bookDTO): Response
     {
         $bookDTO->validate();
@@ -78,5 +96,19 @@ class BookController extends AbstractController
         }
 
         return $this->json($book, Response::HTTP_OK);
+    }
+
+    #[Route('/api/books/{id}', methods: ['DELETE'], format: 'json')]
+    public function delete(int $id): Response
+    {
+        $book = $this->service->delete($id);
+
+        if (!$book) {
+            return $this->json([
+                'message' => 'Book not found'
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        return $this->json(null, Response::HTTP_OK);
     }
 }
