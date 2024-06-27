@@ -8,12 +8,10 @@ use App\Repository\BookRepository;
 
 class BookService
 {
-    public BookRepository $repository;
-
-    public function __construct(BookRepository $repository)
-    {
-        $this->repository = $repository;
-    }
+    public function __construct(
+        public BookRepository $repository
+    )
+    {}
 
     public function find(int $id): Book|null
     {

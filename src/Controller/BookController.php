@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
+#[OA\Tag('Books')]
 class BookController extends AbstractController
 {
     public BookService $service;
@@ -34,8 +35,8 @@ class BookController extends AbstractController
     }
 
     #[Route('/api/books', methods: ['GET'], format: 'json')]
-    #[OA\Parameter(name: 'page', schema: new OA\Schema(type: 'integer'))]
-    #[OA\Parameter(name: 'limit', schema: new OA\Schema(type: 'integer'))]
+    #[OA\QueryParameter(name: 'page', schema: new OA\Schema(type: 'integer'))]
+    #[OA\QueryParameter(name: 'limit', schema: new OA\Schema(type: 'integer'))]
     public function list(Request $request): Response
     {
         $books = $this->service->list(
@@ -60,8 +61,9 @@ class BookController extends AbstractController
             type: "object"
         )
     )]
-    public function create(BookDTO $bookDTO): Response
+    public function create(Request $request, BookDTO $bookDTO): Response
     {
+        $bookDTO->fromRequest($request);
         $bookDTO->validate();
 
         $book = $this->service->create($bookDTO);
@@ -83,8 +85,9 @@ class BookController extends AbstractController
             type: "object"
         )
     )]
-    public function update(int $id, BookDTO $bookDTO): Response
+    public function update(int $id, Request $request, BookDTO $bookDTO): Response
     {
+        $bookDTO->fromRequest($request);
         $bookDTO->validate();
 
         $book = $this->service->update($id, $bookDTO);

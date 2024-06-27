@@ -11,9 +11,7 @@ abstract class BaseDTO
     public function __construct(
         protected ValidatorInterface $validator
     )
-    {
-        $this->populate();
-    }
+    {}
 
     public function validate(): void
     {
@@ -37,14 +35,9 @@ abstract class BaseDTO
         }
     }
 
-    public function getRequest(): Request
+    protected function populate(Request $request): void
     {
-        return Request::createFromGlobals();
-    }
-
-    protected function populate(): void
-    {
-        foreach ($this->getRequest()->toArray() as $property => $value) {
+        foreach ($request->toArray() as $property => $value) {
             if (property_exists($this, $property)) {
                 $this->{$property} = $value;
             }

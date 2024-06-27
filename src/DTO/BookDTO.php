@@ -2,6 +2,7 @@
 
 namespace App\DTO;
 
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Type;
 
@@ -25,6 +26,11 @@ class BookDTO extends BaseDTO
 
     #[Type('string')]
     protected ?string $coAuthor;
+
+    public function fromRequest(Request $request): void
+    {
+        $this->populate($request);
+    }
 
     public function getData(): array
     {
