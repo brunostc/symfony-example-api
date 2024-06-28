@@ -3,6 +3,12 @@
 ## Description
 
 This project is built using PHP 8.1.2 and Symfony 6.4. It uses Docker and Docker Compose for containerization. The project includes an API with documentation available via Swagger.
+It is under construction and may receive updates.
+
+## Roadmap
+
+- Container for PHP runtime
+- Container for load balancer/reverse proxy (in study)
 
 ## Prerequisites
 
