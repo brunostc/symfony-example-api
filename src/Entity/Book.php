@@ -2,13 +2,17 @@
 
 namespace App\Entity;
 
-use App\Repository\BookRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\BookRepository;
+use App\Traits\HasCreatedUpdatedAtColumns;
 
 #[ORM\Entity(repositoryClass: BookRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Book
 {
+    use HasCreatedUpdatedAtColumns;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]

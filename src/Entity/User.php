@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use App\Traits\HasCreatedUpdatedAtColumns;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -10,6 +11,8 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: '`user`')]
 class User
 {
+    use HasCreatedUpdatedAtColumns;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]

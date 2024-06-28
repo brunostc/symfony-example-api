@@ -36,7 +36,7 @@ class AuthController extends AbstractController
     )]
     #[OA\Response(
         response: 200,
-        description: "Returns the rewards of an user",
+        description: "Returns the registered user",
         content: new OA\JsonContent(
             properties: [
                 new OA\Property(property: "id", type: "number", example: "1"),
