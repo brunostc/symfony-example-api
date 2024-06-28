@@ -27,6 +27,16 @@ class User
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $dateOfBirth = null;
 
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'fullName' => $this->fullName,
+            'email' => $this->email,
+            'dateOfBirth' => $this->dateOfBirth->format('d-m-Y'),
+        ];
+    }
+
     public function getId(): ?int
     {
         return $this->id;

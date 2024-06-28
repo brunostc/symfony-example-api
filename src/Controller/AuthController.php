@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\DTO\RegisterDTO;
+use App\Service\JWTService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,7 +15,8 @@ use App\Service\RegisterService;
 class AuthController extends AbstractController
 {
     public function __construct(
-        private readonly RegisterService $service
+        private readonly RegisterService $service,
+        private readonly JWTService  $jwtService
     )
     {}
 
@@ -51,8 +53,12 @@ class AuthController extends AbstractController
         $registerDTO->fromRequest($request);
         $registerDTO->validate();
 
-        $user = $this->service->register($registerDTO);
+        $user = ($this->service->register($registerDTO))->toArray();
+        $jwt = $this->jwtService->encode($user);
 
-        return $this->json($user, Response::HTTP_OK);
+        return $this->json([
+            ...$user,
+            'token' => $jwt
+        ], Response::HTTP_OK);
     }
 }
