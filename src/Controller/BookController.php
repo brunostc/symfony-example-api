@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\DTO\BookDTO;
+use App\Interfaces\JWTAuthenticatedControllerInterface as JWTAuthenticatedController;
 use App\Service\BookService;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,14 +12,12 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[OA\Tag('Books')]
-class BookController extends AbstractController
+class BookController extends AbstractController implements JWTAuthenticatedController
 {
-    public BookService $service;
-
-    public function __construct(BookService $service)
-    {
-        $this->service = $service;
-    }
+    public function __construct(
+        public BookService $service
+    )
+    {}
 
     #[Route('/api/books/{id}', methods: ['GET'], format: 'json')]
     #[OA\Response(
