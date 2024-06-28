@@ -12,8 +12,7 @@ class RegisterService
     public function __construct(
         public UserRepository $userRepository
     )
-    {
-    }
+    {}
 
     public function register(RegisterDTO $registerDTO): User
     {
