@@ -22,8 +22,9 @@ class BookController extends AbstractController implements JWTAuthenticatedContr
     {}
 
     #[Route('/api/books/{id}', methods: ['GET'], format: 'json')]
+    #[OA\Response(response: Response::HTTP_NOT_FOUND, description: 'Book was not found')]
     #[OA\Response(
-        response: 200,
+        response: Response::HTTP_OK,
         description: "Returns the book requested",
         content: new OA\JsonContent(
             properties: [
@@ -54,6 +55,7 @@ class BookController extends AbstractController implements JWTAuthenticatedContr
     #[Route('/api/books', methods: ['GET'], format: 'json')]
     #[OA\QueryParameter(name: 'page', schema: new OA\Schema(type: 'integer'))]
     #[OA\QueryParameter(name: 'limit', schema: new OA\Schema(type: 'integer'))]
+    #[OA\Response(response: Response::HTTP_OK, description: 'Lists the books')]
     public function list(Request $request): Response
     {
         $books = $this->service->list(
@@ -79,7 +81,7 @@ class BookController extends AbstractController implements JWTAuthenticatedContr
         )
     )]
     #[OA\Response(
-        response: 200,
+        response: Response::HTTP_CREATED,
         description: "Returns the book created",
         content: new OA\JsonContent(
             properties: [
@@ -119,7 +121,7 @@ class BookController extends AbstractController implements JWTAuthenticatedContr
         )
     )]
     #[OA\Response(
-        response: 200,
+        response: Response::HTTP_OK,
         description: "Returns the book updated",
         content: new OA\JsonContent(
             properties: [
@@ -134,6 +136,7 @@ class BookController extends AbstractController implements JWTAuthenticatedContr
             type: 'object'
         )
     )]
+    #[OA\Response(response: Response::HTTP_NOT_FOUND, description: 'Book was not found')]
     public function update(int $id, Request $request, BookDTO $bookDTO): Response
     {
         $bookDTO->fromRequest($request);
@@ -151,6 +154,9 @@ class BookController extends AbstractController implements JWTAuthenticatedContr
     }
 
     #[Route('/api/books/{id}', methods: ['DELETE'], format: 'json')]
+    #[OA\RequestBody(description: 'Deletes the book')]
+    #[OA\Response(response: Response::HTTP_NO_CONTENT, description: 'Book was successfully deleted')]
+    #[OA\Response(response: Response::HTTP_NOT_FOUND, description: 'Book was not found')]
     public function delete(int $id): Response
     {
         $book = $this->service->delete($id);
@@ -161,6 +167,6 @@ class BookController extends AbstractController implements JWTAuthenticatedContr
             ], Response::HTTP_NOT_FOUND);
         }
 
-        return $this->json(null, Response::HTTP_OK);
+        return $this->json(null, Response::HTTP_NO_CONTENT);
     }
 }
