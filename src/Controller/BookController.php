@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\DTO\BookDTO;
 use App\Interfaces\JWTAuthenticatedControllerInterface as JWTAuthenticatedController;
 use App\Service\BookService;
+use Nelmio\ApiDocBundle\Annotation\Security;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,6 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[OA\Tag('Books')]
+#[Security(name: 'Bearer')]
 class BookController extends AbstractController implements JWTAuthenticatedController
 {
     public function __construct(

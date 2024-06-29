@@ -32,8 +32,14 @@ class JWTSubscriber implements EventSubscriberInterface
                 throw new AccessDeniedHttpException('This action needs a valid token!');
             }
 
+            $jwtParts = explode(' ', $jwtToken);
+
+            if (count($jwtParts) < 2 || !is_array($jwtParts)) {
+                throw new AccessDeniedHttpException('This action needs a valid token!');
+            }
+
             try {
-                $this->JWTService->decode($jwtToken);
+                $this->JWTService->decode($jwtParts[1]);
             } catch (\Exception $e) {
                 throw new AccessDeniedHttpException('This action needs a valid token!');
             }
