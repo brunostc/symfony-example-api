@@ -29,7 +29,7 @@ class JWTService
     {
         $authHeader = $request->headers->get('Authorization');
 
-        $token = explode('Bearer ', $authHeader[0]);
+        $token = explode(' ', $authHeader);
 
         return $this->decode($token[1])['id'];
     }
