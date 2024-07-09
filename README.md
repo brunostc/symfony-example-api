@@ -5,18 +5,10 @@
 This project is built using PHP 8.1.2 and Symfony 6.4. It uses Docker and Docker Compose for containerization. The project includes an API with documentation available via Swagger.
 It is under construction and may receive updates.
 
-## Roadmap
-
-- Container for PHP runtime
-- Container for load balancer/reverse proxy (in study)
-
 ## Prerequisites
 
-- PHP 8.1.2
-- Composer
 - Docker
 - Docker Compose
-- Symfony CLI
 
 ## Getting Started
 
@@ -29,33 +21,31 @@ git clone https://github.com/brunostc/symfony-example-api
 cd symfony-example-api
 ```
 
-### Step 2: Run the Database
+### Step 2: Run the containers
 
-Start the database container using Docker Compose:
+Build and start all the containers:
 
 ```bash
-docker compose up -d
+docker compose up -d --build
 ```
+After the process is finished proceed to Step 3.
 
-### Step 3: Run the Symfony Application
-
-Start the Symfony application server:
+### Step 3: Install composer dependencies and migrate Database
 
 ```bash
-symfony server:start
+docker exec symfony-example-api-php-fpm-1 composer install
+docker exec symfony-example-api-php-fpm-1 php bin/console doctrine:migrations:migrate
 ```
 
 ### Step 4: Access the API Documentation
 
 Open your web browser and navigate to the following URL to view the Swagger API documentation:
 
-[http://localhost:8000/api/doc](http://localhost:8000/api/doc)
+[http://localhost:8080/api/doc](http://localhost:8080/api/doc)
 
 ## Useful Commands
 
-- **Start the Symfony Server**: `symfony server:start`
-- **Stop the Symfony Server**: `symfony server:stop`
-- **Check Docker Compose Status**: `docker compose ps`
+- **Check Docker Compose Status**: `docker ps`
 - **Stop Docker Compose**: `docker compose down`
 
 ## License
