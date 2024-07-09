@@ -5,7 +5,7 @@ namespace App\Traits;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-    trait HasCreatedUpdatedAtColumns
+trait HasCreatedUpdatedAtColumns
 {
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     private \DateTimeImmutable $createdAt;
