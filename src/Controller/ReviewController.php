@@ -1,7 +1,9 @@
 <?php
 
 namespace App\Controller;
+
 use App\DTO\BookReviewDTO;
+use App\Interfaces\JWTAuthenticatedControllerInterface as JWTAuthenticatedController;
 use App\Service\BookService;
 use App\Service\JWTService;
 use App\Service\ReviewService;
@@ -15,15 +17,14 @@ use OpenApi\Attributes as OA;
 
 #[OA\Tag('Reviews')]
 #[Security(name: 'Bearer')]
-class ReviewController extends AbstractController
+class ReviewController extends AbstractController implements  JWTAuthenticatedController
 {
     public function __construct(
         protected JWTService $jwtService,
         protected BookService $bookService,
         protected ReviewService $reviewService
     )
-    {
-    }
+    {}
 
     #[Route('/api/review/book/{bookId}', name: 'get_user_book_reviews', methods: ['GET'], format: 'json')]
     #[OA\Response(

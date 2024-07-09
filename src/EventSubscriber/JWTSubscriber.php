@@ -14,8 +14,7 @@ class JWTSubscriber implements EventSubscriberInterface
     public function __construct(
         readonly protected JWTService $JWTService
     )
-    {
-    }
+    {}
 
     public function onKernelController(ControllerEvent $event): void
     {
